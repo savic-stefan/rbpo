@@ -1,0 +1,37 @@
+version: '3.7'
+services:
+  db:
+    image: mariadb:10.5
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: dvwa
+      MYSQL_USER: dvwa
+      MYSQL_PASSWORD: dvwa
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - dvwa-net
+
+  dvwa:
+    image: vulnerables/web-dvwa:latest
+    depends_on:
+      - db
+    environment:
+      - MYSQL_HOST=db
+      - MYSQL_DATABASE=dvwa
+      - MYSQL_USER=dvwa
+      - MYSQL_PASSWORD=dvwa
+      - MYSQL_ROOT_PASSWORD=rootpass
+    ports:
+      - "8080:80"
+    networks:
+      - dvwa-net
+    restart: unless-stopped
+
+volumes:
+  db_data:
+
+networks:
+  dvwa-net:
+    driver: bridge
+
